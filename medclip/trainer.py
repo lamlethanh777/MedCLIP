@@ -9,7 +9,11 @@ import numpy as np
 import torch
 from torch import nn
 from torch import device, Tensor
-from tqdm.autonotebook import trange
+try:
+    from tqdm import trange, tqdm
+except Exception:
+    # Fall back to autonotebook (works in Jupyter/notebook environments)
+    from tqdm.autonotebook import trange, tqdm
 from torch.utils.data import DataLoader
 from torch.optim import Optimizer
 from torch import distributed as dist
@@ -56,8 +60,8 @@ class Trainer:
         self.best_score = -9999999
         self.accumulation_steps = accumulation_steps
         if use_amp:
-            from torch.cuda.amp import autocast
-            scaler = torch.cuda.amp.GradScaler()
+            from torch.amp import autocast
+            scaler = torch.amp.GradScaler('cuda')
 
         self.score_logs = defaultdict(list)
         self.evaluator = evaluator
@@ -127,7 +131,7 @@ class Trainer:
                         data = next(data_iterator)
 
                     if use_amp:
-                        with autocast():
+                        with autocast('cuda'):
                             loss_model_return = loss_model(**data)
                         loss_value = loss_weight * loss_model_return['loss_value']
                         loss_value = loss_value
@@ -155,9 +159,9 @@ class Trainer:
                 global_step += 1
 
                 if evaluation_steps>0 and global_step % evaluation_steps == 0:
-                    print('\n######### Train Loss #########')
+                    tqdm.write('\n######### Train Loss #########')
                     for key in train_loss_dict.keys():
-                        print('{} {:.4f} \n'.format(key, np.mean(train_loss_dict[key])))
+                        tqdm.write('{} {:.4f} \n'.format(key, np.mean(train_loss_dict[key])))
                     train_loss_dict = defaultdict(list)
 
                     #TODO: update prompt sentences
@@ -167,10 +171,10 @@ class Trainer:
 
                 if evaluation_steps > 0 and global_step % evaluation_steps == 0 and self.evaluator is not None:
                     scores = self.evaluator.evaluate()
-                    print(f'\n######### Eval {global_step} #########')
+                    tqdm.write(f'\n######### Eval {global_step} #########')
                     for key in scores.keys():
                         if key in ['acc','auc']:
-                            print('{}: {:.4f}'.format(key, scores[key]))
+                            tqdm.write('{}: {:.4f}'.format(key, scores[key]))
                     save_dir =  os.path.join(output_path, f'{global_step}/')
                     self._save_ckpt(model, save_dir)
 
@@ -184,7 +188,7 @@ class Trainer:
                     state_dict = model.state_dict()
                     save_dir =  os.path.join(output_path, f'{global_step}/')
                     self._save_ckpt(model, save_dir)
-                    print('model saved to', os.path.join(output_path, WEIGHTS_NAME))
+                    tqdm.write('model saved to ' + os.path.join(output_path, WEIGHTS_NAME))
 
         if save_best_model:
             import pandas as pd

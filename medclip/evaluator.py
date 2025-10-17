@@ -103,10 +103,15 @@ class Evaluator:
             for i in range(pred_score.shape[1]):
                 y_cls = labels[:, i]
                 pred_cls = pred_score[:, i]
-                auprc_list.append(average_precision_score(y_cls, pred_cls))
-                auroc_list.append(roc_auc_score(y_cls, pred_cls))
-            outputs['auc'] = np.mean(auroc_list)
-            outputs['auprc'] = np.mean(auprc_list)
+                if len(np.unique(y_cls)) > 1:
+                    auprc_list.append(average_precision_score(y_cls, pred_cls))
+                    auroc_list.append(roc_auc_score(y_cls, pred_cls))
+            if len(auroc_list) > 0:
+                outputs['auc'] = np.mean(auroc_list)
+                outputs['auprc'] = np.mean(auprc_list)
+            else:
+                outputs['auc'] = 0.0
+                outputs['auprc'] = 0.0
         return outputs
     
     def process_confusion_matrix(self, cnf_matrix):
