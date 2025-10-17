@@ -89,7 +89,8 @@ trainloader = DataLoader(traindata,
 print("\nBuilding MedCLIP model...")
 # build medclip model (using ViT backbone)
 model = MedCLIPModel(vision_cls=MedCLIPVisionModelViT)
-model.cuda() if torch.cuda.is_available() else model.cpu()
+if torch.cuda.is_available():
+    model = model.cuda()
 
 # build evaluator using Indiana validation set
 print("\nSetting up evaluator...")
@@ -117,7 +118,8 @@ evaluator = Evaluator(
 # build loss models and start training
 print("\nInitializing training...")
 loss_model = ImageTextContrastiveLoss(model)
-loss_model.cuda() if torch.cuda.is_available() else loss_model.cpu()
+if torch.cuda.is_available():
+    loss_model = loss_model.cuda()
 
 train_objectives = [
     (trainloader, loss_model, 1),
