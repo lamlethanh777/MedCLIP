@@ -313,7 +313,7 @@ class ImageTextContrastiveDataset(Dataset):
             if len(sub_sent_df) < n: new_sent_list.append(sub_sent_df)
             else: new_sent_list.append(sub_sent_df.sample(n))
 
-        new_sent_df = pd.concat(new_sent_list, 0)
+        new_sent_df = pd.concat(new_sent_list, axis=0)
         new_sent_df = new_sent_df.drop_duplicates()
         self.prompt_sentence_label = new_sent_df
 
