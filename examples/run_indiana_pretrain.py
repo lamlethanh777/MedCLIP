@@ -77,7 +77,7 @@ print("\nLoading training data...")
 traindata = ImageTextContrastiveDataset(datalist=datalist, imgtransform=transform)
 print(f"Training samples: {len(traindata)}")
 
-train_collate_fn = ImageTextContrastiveCollator()
+train_collate_fn = ImageTextContrastiveCollator(use_eda=False)  # Disable EDA to avoid textaugment dependency
 trainloader = DataLoader(traindata,
     batch_size=train_config['batch_size'],
     collate_fn=train_collate_fn,
