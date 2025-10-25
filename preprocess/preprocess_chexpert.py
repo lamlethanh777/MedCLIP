@@ -12,7 +12,7 @@ from pathlib import Path
 
 
 SAMPLES_PER_CLASS = 200
-TARGET_CLASSES = ['Atelectasis', 'Cardiomegaly', 'Edema', 'Pleural Effusion', 'Pneumonia']
+TARGET_CLASSES = ["Atelectasis", "Cardiomegaly", "Consolidation", "Edema", "Pleural Effusion"]
 
 # Paths
 KAGGLE_SOURCE = "/kaggle/input/chexpert/"
@@ -47,7 +47,7 @@ def load_and_filter_chexpert(csv_path, target_classes, samples_per_class):
         print(f"\n  Sampling {target_class}...")
         
         # Create condition: target class = 1.0
-        condition = (df[target_class] == 1.0)
+        condition = (df[target_class] == 1.0) & (df['Frontal/Lateral'] == 'Frontal')
         
         # All other target classes should be 0.0 or NaN
         for col in target_classes:
@@ -74,6 +74,9 @@ def load_and_filter_chexpert(csv_path, target_classes, samples_per_class):
 
     # Modify path of each record (replace "CheXpert-v1.0-small/" by "")
     final_df['Path'] = final_df['Path'].str.replace('CheXpert-v1.0-small/', '', regex=False)
+    
+    # Replace NaN by 0 in pathology columns
+    final_df[target_classes] = final_df[target_classes].fillna(0)
     
     # Shuffle the final dataset
     final_df = final_df.sample(frac=1, random_state=42).reset_index(drop=True)
@@ -120,8 +123,14 @@ def copy_images_and_prepare_metadata(df, source_base_dir, dest_dir):
         shutil.copy2(source_path, dest_path)
         copied_count += 1
         
+        # Extract patient ID from path (e.g., "patient64541" from "valid/patient64541/study1/...")
+        import re
+        patient_match = re.search(r'(patient[^/\\]+)', relative_path)
+        patient_id = patient_match.group(1) if patient_match else ''
+        
         # Prepare metadata row (keep all relevant columns)
         metadata_row = {
+            'subject_id': patient_id,
             'imgpath': dest_path,
             'Sex': row['Sex'],
             'Age': row['Age'],
