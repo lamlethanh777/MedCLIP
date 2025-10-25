@@ -121,7 +121,7 @@ def sample_and_copy_images(source_dir, dest_dir, image_labels, num_samples, targ
 
 def create_metadata_csv(metadata_list, csv_path):
     """
-    Create CSV file with metadata.
+    Create CSV file with metadata in the format expected by evaluator.
     
     Args:
         metadata_list: List of tuples (patient_id, imgpath, pneumonia)
@@ -130,19 +130,24 @@ def create_metadata_csv(metadata_list, csv_path):
     # Create directory if it doesn't exist
     os.makedirs(os.path.dirname(csv_path), exist_ok=True)
     
-    # Write CSV
-    with open(csv_path, 'w', newline='', encoding='utf-8') as csvfile:
-        writer = csv.writer(csvfile)
-        
-        # Write header
-        writer.writerow(['patient_id', 'imgpath', 'pneumonia'])
-        
-        # Write data
-        for patient_id, imgpath, pneumonia in metadata_list:
-            writer.writerow([patient_id, imgpath, pneumonia])
+    # Convert to DataFrame for easier manipulation
+    df = pd.DataFrame(metadata_list, columns=['patient_id', 'imgpath', 'pneumonia'])
+    
+    # Create separate Normal and Pneumonia columns (one-hot encoded)
+    df['Normal'] = (df['pneumonia'] == 0).astype(int)
+    df['Pneumonia'] = (df['pneumonia'] == 1).astype(int)
+    
+    # Reorder columns to match expected format
+    df = df[['patient_id', 'imgpath', 'Normal', 'Pneumonia']]
+    
+    # Save to CSV
+    df.to_csv(csv_path, index=False)
     
     print(f"\nMetadata CSV created at: {csv_path}")
-    print(f"Total entries: {len(metadata_list)}")
+    print(f"Total entries: {len(df)}")
+    print(f"Columns: {df.columns.tolist()}")
+    print(f"Sample of data:")
+    print(df.head())
 
 
 def main():
