@@ -67,6 +67,7 @@ class Evaluator:
                 pred_label[pred_score<0.5] = 0
                 acc = (pred_label == labels).mean()
                 outputs['acc'] = acc
+                outputs['pred_label'] = pred_label
                 
 
             else: # have 2 outputs
@@ -74,6 +75,7 @@ class Evaluator:
                 pred_label = np.argmax(pred_score, 1)
                 acc = (pred_label == labels).mean()
                 outputs['acc'] = acc
+                outputs['pred_label'] = pred_label
 
                 # cnf_matrix = confusion_matrix(labels, pred_label)
                 # res = self.process_confusion_matrix(cnf_matrix)
@@ -92,6 +94,7 @@ class Evaluator:
             res = res['macro avg']
             res.pop('support')
             outputs.update(res)
+            outputs['pred_label'] = pred_label
 
             # cnf_matrix = confusion_matrix(labels, pred_label)
             # res = self.process_confusion_matrix(cnf_matrix)
@@ -107,6 +110,7 @@ class Evaluator:
                 auroc_list.append(roc_auc_score(y_cls, pred_cls))
             outputs['auc'] = np.mean(auroc_list)
             outputs['auprc'] = np.mean(auprc_list)
+            outputs['pred_label'] = pred_label
         return outputs
     
     def process_confusion_matrix(self, cnf_matrix):
