@@ -35,7 +35,7 @@ def sample_and_copy_images(source_dir, dest_dir, num_samples, is_covid):
         is_covid: True if COVID images, False if Normal
         
     Returns:
-        List of tuples (subject_id, image_path, covid_label, normal_label)
+        List of tuples (subject_id, image_path, covid_label)
     """
     # Get all image files
     all_images = [f for f in os.listdir(source_dir) if f.endswith('.png')]
@@ -55,7 +55,6 @@ def sample_and_copy_images(source_dir, dest_dir, num_samples, is_covid):
     # Copy images and prepare metadata
     metadata = []
     covid_label = 1 if is_covid else 0
-    normal_label = 0 if is_covid else 1
     
     for img_name in sampled_images:
         source_path = os.path.join(source_dir, img_name)
@@ -65,7 +64,7 @@ def sample_and_copy_images(source_dir, dest_dir, num_samples, is_covid):
         shutil.copy2(source_path, dest_path)
         
         # Store metadata (relative path from test folder)
-        metadata.append((img_name.replace(".png", ""), dest_path, covid_label, normal_label))
+        metadata.append((img_name.replace(".png", ""), dest_path, covid_label))
     
     return metadata
 
@@ -86,11 +85,11 @@ def create_metadata_csv(metadata_list, csv_path):
         writer = csv.writer(csvfile)
         
         # Write header
-        writer.writerow(['subject_id', 'imgpath', 'COVID', 'Normal'])
+        writer.writerow(['subject_id', 'imgpath', 'COVID'])
         
         # Write data
-        for subject_id, imgpath, covid, normal in metadata_list:
-            writer.writerow([subject_id, imgpath, covid, normal])
+        for subject_id, imgpath, covid in metadata_list:
+            writer.writerow([subject_id, imgpath, covid])
     
     print(f"\nMetadata CSV created at: {csv_path}")
     print(f"Total entries: {len(metadata_list)}")

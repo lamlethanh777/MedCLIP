@@ -126,7 +126,6 @@ CHEXPERT_CLASS_PROMPTS = {
 }
 
 COVID_TASKS = [
-    'Normal',
     'COVID',
 ]
 COVID_CLASS_PROMPTS = {
