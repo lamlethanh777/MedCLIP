@@ -11,7 +11,6 @@ import csv
 from pathlib import Path
 
 
-# Configuration - YOU CAN CHANGE THESE NUMBERS
 NUM_COVID_SAMPLES = 3000
 NUM_NORMAL_SAMPLES = 3122
 
