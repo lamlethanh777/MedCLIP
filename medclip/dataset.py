@@ -367,6 +367,7 @@ class ZeroShotImageDataset(Dataset):
         datalist=['chexpert-5x200'],
         class_names=None,
         imgtransform=None,
+        path=None
         ) -> None:
         '''support data list in mimic-5x200, chexpert-5x200, rsna-balanced-test, covid-test
         args:
@@ -389,7 +390,7 @@ class ZeroShotImageDataset(Dataset):
         # imgpath, subject_id, report, labels...(14 labels)
         df_list = []
         for data in datalist:
-            filename = f'./local_data/{data}-meta.csv'
+            filename = path if path else f'./local_data/{data}-meta.csv'
             print('load data from', filename)
             df = pd.read_csv(filename, index_col=0)
             df_list.append(df)
