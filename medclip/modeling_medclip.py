@@ -22,7 +22,11 @@ class MedCLIPTextModel(nn.Module):
         self.last_n_layer = 4
         self.model = AutoModel.from_pretrained(self.bert_type, output_hidden_states=True)
         # this tokenizer is actually not used
-        self.tokenizer = AutoTokenizer.from_pretrained(self.bert_type)
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            self.bert_type,
+            trust_remote_code=False,
+            use_fast=True
+        )
         self.projection_head = nn.Linear(768, proj_dim, bias=proj_bias)
 
     def forward(self, input_ids, attention_mask):

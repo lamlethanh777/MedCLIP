@@ -106,7 +106,11 @@ def generate_rsna_class_prompts(n = None):
     return prompts
 
 def process_class_prompts(cls_prompts):
-    tokenizer = AutoTokenizer.from_pretrained(constants.BERT_TYPE)
+    tokenizer = AutoTokenizer.from_pretrained(
+        constants.BERT_TYPE,
+        trust_remote_code=False,
+        use_fast=True
+    )
     tokenizer.model_max_length = 77
     cls_prompt_inputs = defaultdict()
     for k,v in cls_prompts.items():
@@ -116,7 +120,11 @@ def process_class_prompts(cls_prompts):
 
 
 def process_class_prompts_for_tuning(cls_prompts, n_context, class_specific_context):
-    tokenizer = AutoTokenizer.from_pretrained(constants.BERT_TYPE)
+    tokenizer = AutoTokenizer.from_pretrained(
+        constants.BERT_TYPE,
+        trust_remote_code=False,
+        use_fast=True
+    )
     tokenizer.model_max_length = 77
 
     if class_specific_context:

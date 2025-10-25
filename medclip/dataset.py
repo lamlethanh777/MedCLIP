@@ -149,7 +149,11 @@ class MedCLIPProcessor(CLIPProcessor):
     tokenizer_class = ("BertTokenizer", "BertTokenizerFast")
     def __init__(self):
         feature_extractor = MedCLIPFeatureExtractor()
-        tokenizer = AutoTokenizer.from_pretrained(constants.BERT_TYPE)
+        tokenizer = AutoTokenizer.from_pretrained(
+            constants.BERT_TYPE,
+            trust_remote_code=False,
+            use_fast=True
+        )
         tokenizer.model_max_length = 77
         super().__init__(feature_extractor, tokenizer)
 
@@ -332,7 +336,11 @@ class ImageTextContrastiveCollator:
         else:
             self.eda = None
 
-        self.tokenizer = AutoTokenizer.from_pretrained(constants.BERT_TYPE)
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            constants.BERT_TYPE,
+            trust_remote_code=False,
+            use_fast=True
+        )
         self.tokenizer.model_max_length = 77
     def __call__(self, batch):
         inputs = defaultdict(list)
@@ -419,7 +427,11 @@ class ZeroShotImageDataset(Dataset):
 class ZeroShotImageCollator:
     def __init__(self, mode, cls_prompts=None, n_prompt=5):
         # initialize tokenizer
-        self.tokenizer = AutoTokenizer.from_pretrained(constants.BERT_TYPE)
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            constants.BERT_TYPE,
+            trust_remote_code=False,
+            use_fast=True
+        )
         self.tokenizer.model_max_length = 77
         assert mode in ['multiclass','multilabel','binary']
         self.mode = mode
