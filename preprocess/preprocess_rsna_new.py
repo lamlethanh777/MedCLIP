@@ -21,7 +21,7 @@ NUM_NORMAL_SAMPLES = 2000
 KAGGLE_SOURCE = "/kaggle/input/rsna-pneumonia-processed-dataset/"
 LOCAL_SOURCE = "../../datasets/RSNA-processed/"
 TRAIN_IMAGES_DIR = "Training/Images"
-TRAIN_METADATA_CSV = "Training/stage2_train_metadata.csv"
+TRAIN_METADATA_CSV = "/stage2_train_metadata.csv"
 TEST_DEST = "data/RSNA/test"
 CSV_PATH = "local_data/rsna-test-meta.csv"
 
