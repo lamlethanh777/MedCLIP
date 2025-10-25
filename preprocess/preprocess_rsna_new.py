@@ -14,8 +14,8 @@ from pathlib import Path
 
 
 # Configuration - YOU CAN CHANGE THESE NUMBERS
-NUM_PNEUMONIA_SAMPLES = 2000
-NUM_NORMAL_SAMPLES = 2000
+NUM_PNEUMONIA_SAMPLES = 1000
+NUM_NORMAL_SAMPLES = 1000
 
 # Paths for processed dataset
 KAGGLE_SOURCE = "/kaggle/input/rsna-pneumonia-processed-dataset/"
