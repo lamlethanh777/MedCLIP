@@ -387,12 +387,12 @@ class ZeroShotImageDataset(Dataset):
 
         self.class_names = class_names
 
-        # imgpath, subject_id, report, labels...(14 labels)
+        # subject_id, imgpath, report, labels...(14 labels)
         df_list = []
         for data in datalist:
             filename = path if path else f'./local_data/{data}-meta.csv'
             print('load data from', filename)
-            df = pd.read_csv(filename, index_col=0)
+            df = pd.read_csv(filename, index_col=0) # subject_id
             df_list.append(df)
         self.df = pd.concat(df_list, axis=0).reset_index(drop=True)
 

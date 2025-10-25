@@ -16,10 +16,12 @@ NUM_COVID_SAMPLES = 3000
 NUM_NORMAL_SAMPLES = 3122
 
 # Paths
-COVID_SOURCE = r"..\..\datasets\COVID\archive\COVID-19_Radiography_Dataset\COVID\images"
-NORMAL_SOURCE = r"..\..\datasets\COVID\archive\COVID-19_Radiography_Dataset\Normal\images"
-TEST_DEST = r"data\COVID\test"
-CSV_PATH = r"local_data\covid-test-meta.csv"
+KAGGLE_SOURCE = "/kaggle/input/covid19-radiography-database/"
+LOCAL_SOURCE = "../../datasets/COVID/archive/"
+COVID_SOURCE = "COVID-19_Radiography_Dataset/COVID/images"
+NORMAL_SOURCE = "COVID-19_Radiography_Dataset/Normal/images"
+TEST_DEST = "data/COVID/test"
+CSV_PATH = "local_data/covid-test-meta.csv"
 
 
 def sample_and_copy_images(source_dir, dest_dir, num_samples, is_covid):
@@ -33,7 +35,7 @@ def sample_and_copy_images(source_dir, dest_dir, num_samples, is_covid):
         is_covid: True if COVID images, False if Normal
         
     Returns:
-        List of tuples (image_path, image_name, covid_label)
+        List of tuples (subject_id, image_path, covid_label, normal_label)
     """
     # Get all image files
     all_images = [f for f in os.listdir(source_dir) if f.endswith('.png')]
@@ -53,6 +55,7 @@ def sample_and_copy_images(source_dir, dest_dir, num_samples, is_covid):
     # Copy images and prepare metadata
     metadata = []
     covid_label = 1 if is_covid else 0
+    normal_label = 0 if is_covid else 1
     
     for img_name in sampled_images:
         source_path = os.path.join(source_dir, img_name)
@@ -62,7 +65,7 @@ def sample_and_copy_images(source_dir, dest_dir, num_samples, is_covid):
         shutil.copy2(source_path, dest_path)
         
         # Store metadata (relative path from test folder)
-        metadata.append((img_name, img_name, covid_label))
+        metadata.append((img_name.replace(".png", ""), dest_path, covid_label, normal_label))
     
     return metadata
 
@@ -83,11 +86,11 @@ def create_metadata_csv(metadata_list, csv_path):
         writer = csv.writer(csvfile)
         
         # Write header
-        writer.writerow(['imgpath', 'subject_id', 'COVID'])
+        writer.writerow(['subject_id', 'imgpath', 'COVID', 'Normal'])
         
         # Write data
-        for imgpath, subject_id, covid in metadata_list:
-            writer.writerow([imgpath, subject_id, covid])
+        for subject_id, imgpath, covid, normal in metadata_list:
+            writer.writerow([subject_id, imgpath, covid, normal])
     
     print(f"\nMetadata CSV created at: {csv_path}")
     print(f"Total entries: {len(metadata_list)}")
@@ -116,7 +119,7 @@ def main():
     print("Processing COVID images...")
     print("-" * 70)
     covid_metadata = sample_and_copy_images(
-        COVID_SOURCE, 
+        KAGGLE_SOURCE + COVID_SOURCE, 
         TEST_DEST, 
         NUM_COVID_SAMPLES, 
         is_covid=True
@@ -127,7 +130,7 @@ def main():
     print("Processing Normal images...")
     print("-" * 70)
     normal_metadata = sample_and_copy_images(
-        NORMAL_SOURCE, 
+        KAGGLE_SOURCE + NORMAL_SOURCE, 
         TEST_DEST, 
         NUM_NORMAL_SAMPLES, 
         is_covid=False
