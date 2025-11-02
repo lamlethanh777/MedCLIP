@@ -193,14 +193,16 @@ def main():
         for dataset, results in all_results.items():
             print(f"\n{dataset.upper()}:")
             for metric, value in results.items():
-                print(f"  {metric}: {value:.4f}")
+                print(f"  {metric}: {value}")
     else:
         # Evaluate on single dataset
-        run_zero_shot_evaluation(
+        results = run_zero_shot_evaluation(
             dataset_name=args.dataset,
             model_type=args.model,
             batch_size=args.batch_size
         )
+        for metric, value in results.items():
+            print(f"  {metric}: {value}")
 
 if __name__ == '__main__':
     main()
