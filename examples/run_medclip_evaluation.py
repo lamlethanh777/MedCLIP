@@ -18,7 +18,7 @@ from medclip.prompts import generate_class_prompts, generate_chexpert_class_prom
 from medclip import utils
 
 # set random seed
-utils.set_random_seed()
+utils.set_random_seed(42)
 
 # set cuda devices
 os.environ['CUDA_VISIBLE_DEVICES']='0'
