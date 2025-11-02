@@ -145,3 +145,5 @@ checkpoints
 *.bin
 
 docs
+results.typ
+preprocess_mimic.py
