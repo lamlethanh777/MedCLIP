@@ -109,7 +109,8 @@ def process_class_prompts(cls_prompts):
     tokenizer = AutoTokenizer.from_pretrained(
         constants.BERT_TYPE,
         trust_remote_code=False,
-        use_fast=True
+        use_fast=True,
+        local_files_only=True
     )
     tokenizer.model_max_length = 77
     cls_prompt_inputs = defaultdict()
@@ -123,7 +124,8 @@ def process_class_prompts_for_tuning(cls_prompts, n_context, class_specific_cont
     tokenizer = AutoTokenizer.from_pretrained(
         constants.BERT_TYPE,
         trust_remote_code=False,
-        use_fast=True
+        use_fast=True,
+        local_files_only=True
     )
     tokenizer.model_max_length = 77
 

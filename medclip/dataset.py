@@ -152,7 +152,8 @@ class MedCLIPProcessor(CLIPProcessor):
         tokenizer = AutoTokenizer.from_pretrained(
             constants.BERT_TYPE,
             trust_remote_code=False,
-            use_fast=True
+            use_fast=True,
+            local_files_only=True
         )
         tokenizer.model_max_length = 77
         super().__init__(feature_extractor, tokenizer)
@@ -339,7 +340,8 @@ class ImageTextContrastiveCollator:
         self.tokenizer = AutoTokenizer.from_pretrained(
             constants.BERT_TYPE,
             trust_remote_code=False,
-            use_fast=True
+            use_fast=True,
+            local_files_only=True
         )
         self.tokenizer.model_max_length = 77
     def __call__(self, batch):
@@ -430,7 +432,8 @@ class ZeroShotImageCollator:
         self.tokenizer = AutoTokenizer.from_pretrained(
             constants.BERT_TYPE,
             trust_remote_code=False,
-            use_fast=True
+            use_fast=True,
+            local_files_only=True
         )
         self.tokenizer.model_max_length = 77
         assert mode in ['multiclass','multilabel','binary']

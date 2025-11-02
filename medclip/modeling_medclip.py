@@ -20,12 +20,13 @@ class MedCLIPTextModel(nn.Module):
         super().__init__()
         self.bert_type = bert_type
         self.last_n_layer = 4
-        self.model = AutoModel.from_pretrained(self.bert_type, output_hidden_states=True)
+        self.model = AutoModel.from_pretrained(self.bert_type, local_files_only=True, output_hidden_states=True)
         # this tokenizer is actually not used
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.bert_type,
             trust_remote_code=False,
-            use_fast=True
+            use_fast=True,
+            local_files_only=True
         )
         self.projection_head = nn.Linear(768, proj_dim, bias=proj_bias)
 
@@ -95,7 +96,7 @@ class MedCLIPVisionModelViT(nn.Module):
         '''
         super().__init__()
         self.vit_type = constants.VIT_TYPE
-        self.model = AutoModel.from_pretrained(self.vit_type)
+        self.model = AutoModel.from_pretrained(self.vit_type, local_files_only=True)
         self.projection_head = nn.Linear(768, 512, bias=False)
         if checkpoint is not None:
             state_dict = torch.load(os.path.join(checkpoint, constants.WEIGHTS_NAME))
