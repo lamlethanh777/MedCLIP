@@ -185,7 +185,9 @@ class MedCLIPModel(nn.Module):
             zipf.close()
             print('\n Download pretrained model from:', pretrained_url)
         
-        state_dict = torch.load(os.path.join(input_dir, constants.WEIGHTS_NAME))
+        # Load weights with map_location to handle both CPU and CUDA environments
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        state_dict = torch.load(os.path.join(input_dir, constants.WEIGHTS_NAME), map_location=device)
         self.load_state_dict(state_dict, strict=False)
         print('load model weight from:', input_dir)
 
